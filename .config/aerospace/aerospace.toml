@@ -1,0 +1,105 @@
+# General Settings
+after-login-command = []
+after-startup-command = []
+
+
+start-at-login = true
+
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+accordion-padding = 80
+
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+
+
+
+
+# German Keyboard Layout Preset
+[key-mapping]
+preset = 'qwerty'
+
+# Gaps Configuration
+[gaps]
+inner.horizontal = 20
+inner.vertical = 20
+outer.left = 20
+outer.bottom = 20
+outer.top = 20
+outer.right = 20
+
+# Main Binding Mode
+[mode.main.binding]
+# Resize (Control Modifiers: Shift-Option-Command)
+shift-alt-cmd-minus = 'resize smart -50'  # Shrink window minus=ß
+shift-alt-cmd-0 = 'resize smart +50'      # Expand window
+
+# Layout Switch (Control Modifiers: Shift-Option-Command)
+shift-alt-cmd-period = 'layout tiles horizontal vertical' # Switch to tiled layout
+shift-alt-cmd-comma = 'layout accordion horizontal vertical'
+
+# Focus (Control Modifiers: Shift-Option-Command)
+shift-alt-cmd-h = 'focus left'
+shift-alt-cmd-j = 'focus down'
+shift-alt-cmd-k = 'focus up'
+shift-alt-cmd-l = 'focus right'
+
+# Move (Move Modifiers: Control-Option-Command)
+ctrl-alt-cmd-h = 'move left'
+ctrl-alt-cmd-j = 'move down'
+ctrl-alt-cmd-k = 'move up'
+ctrl-alt-cmd-l = 'move right'
+
+# Workspaces (Control Modifiers: Shift-Option-Command)
+shift-alt-cmd-u = 'workspace 1'
+shift-alt-cmd-i = 'workspace i'
+shift-alt-cmd-o = 'workspace o'
+shift-alt-cmd-p = 'workspace LaTeX'
+
+shift-alt-cmd-f = 'fullscreen'
+
+
+# Move nodes to workspaces (Move Modifiers: Control-Option-Command)
+ctrl-alt-cmd-u = 'move-node-to-workspace 1'
+ctrl-alt-cmd-i = 'move-node-to-workspace i'
+ctrl-alt-cmd-o = 'move-node-to-workspace o'
+ctrl-alt-cmd-p = 'move-node-to-workspace LaTeX'
+
+
+# Workspace and Monitor Switching (Control Modifiers: Shift-Option-Command)
+shift-alt-cmd-tab = 'workspace-back-and-forth'
+ctrl-alt-cmd-tab = 'move-workspace-to-monitor --wrap-around next'
+
+
+
+
+
+
+# Service Mode
+
+shift-alt-cmd-m = 'mode manage'
+
+[mode.manage.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main']
+f = ['layout floating tiling', 'mode main']
+backspace = ['close-all-windows-but-current', 'mode main']
+
+ctrl-alt-cmd-h = ['join-with left', 'mode main']
+ctrl-alt-cmd-j = ['join-with down', 'mode main']
+ctrl-alt-cmd-k = ['join-with up', 'mode main']
+ctrl-alt-cmd-l = ['join-with right', 'mode main']
+
+
+[[on-window-detected]]
+if.app-id = 'dev.warp.Warp-Stable'
+run = "move-node-to-workspace LaTeX"
+
+
+[[on-window-detected]]
+if.app-id = 'com.jetbrains.pycharm.ce'
+run = "move-node-to-workspace P"
+

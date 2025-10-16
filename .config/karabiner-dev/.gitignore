@@ -1,0 +1,9 @@
+# Node.js Artefakte
+node_modules/
+dist/
+*.log
+
+# Editor-Dateien
+.idea/
+.vscode/
+.DS_Store

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/config.tsx"],
+  "sourcesContent": ["import { Form, LocalStorage } from \"@raycast/api\";\n\nexport default function Command() {\n  return (\n    <Form>\n      <Form.Dropdown\n        id=\"format\"\n        title=\"Output Format\"\n        filtering={false}\n        storeValue\n        onChange={async (value) => {\n          await LocalStorage.setItem(\"format\", value);\n        }}\n      >\n        <Form.Dropdown.Item value=\"raw\" title=\"Raw\" />\n        <Form.Dropdown.Item value=\"inline\" title=\"Inline\" />\n        <Form.Dropdown.Item value=\"block\" title=\"Block\" />\n      </Form.Dropdown>\n    </Form>\n  );\n}\n"],
+  "mappings": "yaAAA,IAAAA,EAAA,GAAAC,EAAAD,EAAA,aAAAE,IAAA,eAAAC,EAAAH,GAAA,IAAAI,EAAmC,wBAK7BC,EAAA,6BAHS,SAARH,GAA2B,CAChC,SACE,OAAC,QACC,oBAAC,OAAK,SAAL,CACC,GAAG,SACH,MAAM,gBACN,UAAW,GACX,WAAU,GACV,SAAU,MAAOI,GAAU,CACzB,MAAM,eAAa,QAAQ,SAAUA,CAAK,CAC5C,EAEA,oBAAC,OAAK,SAAS,KAAd,CAAmB,MAAM,MAAM,MAAM,MAAM,KAC5C,OAAC,OAAK,SAAS,KAAd,CAAmB,MAAM,SAAS,MAAM,SAAS,KAClD,OAAC,OAAK,SAAS,KAAd,CAAmB,MAAM,QAAQ,MAAM,QAAQ,GAClD,EACF,CAEJ",
+  "names": ["config_exports", "__export", "Command", "__toCommonJS", "import_api", "import_jsx_runtime", "value"]
+}
