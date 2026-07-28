@@ -3,24 +3,19 @@ return {
   version = "*",
   lazy = true,
   ft = "markdown",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-  },
+  dependencies = { "nvim-lua/plenary.nvim" },
   keys = {
-    -- Real keymaps
     { "<leader>on", "<cmd>ObsidianNew<CR>", desc = "New Note" },
     { "<leader>ot", "<cmd>ObsidianTemplate<CR>", desc = "Templates" },
     { "<leader>od", "<cmd>ObsidianToday<CR>", desc = "Daily Note" },
     { "<leader>os", "<cmd>ObsidianSearch<CR>", desc = "Search Notes" },
-
-    -- Group with icon
     {
       "<leader>o",
       desc = "Obsidian",
       icon = {
-        icon = "\u{f01c8}", -- Nerd Font icon
-        hl = "Title", -- Highlight group
-        color = "purple", -- Color category (from preset list)
+        icon = "\u{f01c8}",
+        hl = "Title",
+        color = "purple",
       },
     },
   },
@@ -40,7 +35,7 @@ return {
       return title
     end,
     completion = {
-      nvim_cmp = false, -- set to true only if you have nvim-cmp installed
+      nvim_cmp = false,
     },
     daily_notes = {
       folder = "Daily Notes",

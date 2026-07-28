@@ -352,12 +352,12 @@
                                         "value": 1
                                     }
                                 ],
-                                "description": "Open raycast://extensions/Keyruu/zen-browser/new-tab",
+                                "description": "Open raycast://extensions/ron-myers/brave/new-tab",
                                 "from": {
                                     "key_code": "n",
                                     "modifiers": { "optional": ["any"] }
                                 },
-                                "to": [{ "shell_command": "open raycast://extensions/Keyruu/zen-browser/new-tab" }],
+                                "to": [{ "shell_command": "open raycast://extensions/ron-myers/brave/new-tab" }],
                                 "type": "basic"
                             }
                         ]
@@ -439,12 +439,12 @@
                                         "value": 1
                                     }
                                 ],
-                                "description": "Open -a 'Zen.app'",
+                                "description": "Open -a 'Brave Browser.app'",
                                 "from": {
                                     "key_code": "b",
                                     "modifiers": { "optional": ["any"] }
                                 },
-                                "to": [{ "shell_command": "open -a 'Zen.app'" }],
+                                "to": [{ "shell_command": "open -a 'Brave Browser.app'" }],
                                 "type": "basic"
                             },
                             {
@@ -1290,7 +1290,7 @@
                 ]
             },
             "name": "Default",
-            "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         }
     ]
 }

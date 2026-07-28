@@ -9,7 +9,7 @@ const rules: KarabinerRules[] = [
     manipulators: [
       {
         description: "Caps Lock -> Hyper Key",
-        from: {
+        from: { 
           key_code: "caps_lock",
           modifiers: {
             optional: ["any"],
@@ -44,57 +44,6 @@ const rules: KarabinerRules[] = [
     spacebar: open(
       "raycast://extensions/raycast/apple-reminders/create-reminder"
     ),
-    //symbol access
-    5: {
-      description: "Hyper+5 -> [",
-      to: [
-        {
-          key_code: "5",
-          modifiers: ["right_option"],
-        },
-      ],
-      type: "basic",
-    },
-    6: {
-      description: "Hyper+6 -> ]",
-      to: [
-        {
-          key_code: "6",
-          modifiers: ["right_option"],
-        },
-      ],
-      type: "basic",
-    },
-    7: {
-      description: "Hyper+7 -> backslash",
-      to: [
-        {
-          key_code: "7",
-          modifiers: ["left_option", "left_shift"],
-        },
-      ],
-      type: "basic",
-    },
-    8: {
-      description: "Hyper+8 -> {",
-      to: [
-        {
-          key_code: "8",
-          modifiers: ["right_option"],
-        },
-      ],
-      type: "basic",
-    },
-    9: {
-      description: "Hyper+9 -> }",
-      to: [
-        {
-          key_code: "9",
-          modifiers: ["right_option"],
-        },
-      ],
-      type: "basic",
-    },
 
     //aerospace modifiers
     a: {
@@ -123,11 +72,11 @@ const rules: KarabinerRules[] = [
       m: open("https://moodle.lmu.de/"),
       z: open("https://www.youtube.com/"),
       l: open("https://tinyurl.com/35kkup2"),
-      n: open("raycast://extensions/ron-myers/brave/new-tab"),
+      n: open("raycast://extensions/Keyruu/zen-browser/new-tab"),
     },
     // o = "Open" applications
     o: {
-      b: app("Brave Browser"),
+      b: app("Zen"),
       c: app("ChatGPT"),
       d: app("Discord"),
       f: app("Finder"),
