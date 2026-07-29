@@ -8,6 +8,12 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/): every directory in
 this repo is symlinked into `~/.config`, so the files you edit here are the
 files your tools read. There is no copy step and no sync step.
 
+**Looking for a keybinding?** [`CHEATSHEET.md`](CHEATSHEET.md) lists every one,
+sorted by scope. It is *generated* from the configs by
+`scripts/gen-cheatsheet.py`, so it cannot drift — the pre-commit hook refuses a
+commit that leaves it stale. The rules that decide where a new binding goes are
+in [`KEYBINDINGS.md`](KEYBINDINGS.md).
+
 ---
 
 ## Install
@@ -144,13 +150,14 @@ lists everything. Groups:
 | Prefix | Group | Prefix | Group |
 | --- | --- | --- | --- |
 | `<leader>a` | ai | `<leader>p` | python |
-| `<leader>b` | buffer | `<leader>q` | quit / session / quarto |
-| `<leader>c` | code | `<leader>r` | run |
-| `<leader>e` | explorer (toggle) | `<leader>s` | sidekick / claude |
-| `<leader>f` | find | `<leader>u` | ui |
-| `<leader>g` | git | `<leader>v` | latex / citations |
-| `<leader>l` | lazy | `<leader>x` | diagnostics |
-| `<leader>m` | markdown | `<leader>o` | obsidian |
+| `<leader>b` | buffer | `<leader>q` | quit |
+| `<leader>c` | code | `<leader>r` | run (incl. Quarto) |
+| `<leader>e` | explorer (toggle) | `<leader>s` | session |
+| `<leader>f` | find | `<leader>t` | terminal |
+| `<leader>g` | git | `<leader>u` | ui |
+| `<leader>l` | lazy | `<leader>v` | latex |
+| `<leader>m` | markdown | `<leader>x` | diagnostics |
+| `<leader>n` | notes (Obsidian) | | |
 
 Most-used:
 
@@ -163,8 +170,12 @@ Most-used:
 | `<leader>qQ` | quit all, discarding changes |
 | `<leader>gg` | lazygit |
 | `<leader>vb` `<leader>vv` | compile LaTeX / view PDF |
-| `<leader>qp` `<leader>qr` | Quarto preview / render |
-| `<leader>pi` `<leader>pe` | Jupyter kernel init / evaluate cell |
+| `<leader>rp` `<leader>rr` | Quarto preview / render |
+| `<leader>rf` | run current Python file |
+| `<leader>pi` `<leader>pe` | Jupyter kernel init / evaluate selection |
+| `<leader>pc` `<leader>pC` | execute cell / all cells (molten) |
+| `<leader>nn` `<leader>ns` | new note / search notes (Obsidian) |
+| `<leader>tc` | Claude Code terminal |
 | `<leader>u1`–`u4` | switch colorscheme |
 
 ### `zsh`
@@ -198,7 +209,14 @@ Remove that line and starship silently falls back to its stock prompt.
 
 Catppuccin Mocha, MesloLGS Nerd Font Mono, 92% opacity with background blur
 (Neovim's colorschemes are all transparent, so the terminal background is what
-shows through). Native macOS tabs, `cmd+d`/`cmd+shift+d` for splits.
+shows through). Native macOS tabs, `cmd+d`/`cmd+shift+d` to create splits and
+`cmd+shift+h/j/k/l` to move between them.
+
+Ghostty deliberately binds **no `ctrl`+letter chord at all**, so `ctrl+hjkl`
+passes through to Neovim's window navigation. Split focus sits on `cmd+shift`
+rather than plain `cmd` because `cmd+h` is macOS's "Hide Application" and is
+intercepted before Ghostty sees it — see [`KEYBINDINGS.md`](KEYBINDINGS.md)
+§2.6. Tab switching is `ctrl+tab` / `ctrl+shift+tab`.
 
 Reload after editing with `cmd+shift+r`.
 
@@ -222,18 +240,35 @@ not pick it up.**
 
 ### `aerospace`
 
-Tiling window manager, 20px gaps. Modifiers: `shift-alt-cmd` focuses/switches,
-`ctrl-alt-cmd` moves.
+Tiling window manager, 20px gaps. **You never type an AeroSpace chord
+directly** — you press `Hyper` (Caps Lock) plus a key, and Karabiner translates
+it into the private `ctrl-shift-cmd` transport chord AeroSpace listens for.
+`Hyper` is a Karabiner variable rather than real modifiers, so AeroSpace cannot
+see it without this relay. See [`KEYBINDINGS.md`](KEYBINDINGS.md) §4.1.
 
-| Key | Action |
+| Press | Action |
 | --- | --- |
-| `shift-alt-cmd` + `h/j/k/l` | focus window |
-| `ctrl-alt-cmd` + `h/j/k/l` | move window |
-| `shift-alt-cmd` + `u/i/o/p` | workspace 1 / i / o / LaTeX |
-| `ctrl-alt-cmd` + `u/i/o/p` | move window to that workspace |
-| `shift-alt-cmd-f` | fullscreen |
-| `shift-alt-cmd-tab` | back and forth |
-| `shift-alt-cmd-m` | enter `manage` mode (`esc` reloads config, `r` flattens tree) |
+| `Hyper` + `h/j/k/l` | focus window |
+| `Hyper` + `f` | fullscreen |
+| `Hyper` + `1/2/3/4` | workspace 1–4 (formerly named `1`, `i`, `o`, `LaTeX`) |
+| `Hyper` + `tab` | back and forth |
+| `Hyper` + `w` | enter **window mode** |
+
+Window mode is where windows get rearranged. Adjustments keep the mode open;
+placements perform and exit. There is no on-screen indicator, so `Esc` is the
+way out.
+
+| Key | Action | |
+| --- | --- | --- |
+| `h/j/k/l` | move window | *stays* |
+| `H/J/K/L` | join with | *stays* |
+| `ctrl` + `h/j/k/l` | resize | *stays* |
+| `f` | toggle floating | exits |
+| `t` | toggle layout (tiles ↔ accordion) | exits |
+| `m` | move to next monitor | exits |
+| `r` | flatten tree | exits |
+| `1/2/3/4` | move window to workspace | exits |
+| `esc` | reload config and leave | exits |
 
 ### `karabiner`
 
