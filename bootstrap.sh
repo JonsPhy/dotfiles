@@ -63,6 +63,18 @@ else
   stow "${STOW_FLAGS[@]}" --target="$zen_profile" zen
 fi
 
+# Yazi's flavors and plugins are fetched, not tracked (see .gitignore). Without
+# this, yazi starts with "Failed to read flavor ... No such file or directory"
+# because theme.toml names a flavor that was never downloaded.
+if [[ "${1:-}" != "--check" ]]; then
+  if command -v ya >/dev/null 2>&1; then
+    echo "Installing yazi packages from yazi/package.toml"
+    ya pkg install
+  else
+    echo "  skipping yazi packages: ya not installed (brew install yazi)" >&2
+  fi
+fi
+
 # Route git at the tracked hooks directory so the gitleaks pre-commit scan runs.
 if [[ "${1:-}" != "--check" ]]; then
   git config core.hooksPath .githooks

@@ -21,6 +21,14 @@ raycast/extensions/
 **/credentials.json
 .claude/settings.local.json
 
+# Yazi flavors and plugins are fetched packages, not config: `ya pkg` clones
+# them into the config dir, and 664 KB of the catppuccin flavor is a preview
+# screenshot. yazi/package.toml is the lockfile (it pins rev + hash), so it is
+# tracked and `ya pkg install` restores these. Same split as nvim: the pins are
+# committed, the fetched content is not.
+yazi/flavors/
+yazi/plugins/
+
 # Editor / tooling state
 nvim/lazy-lock.json.bak
 **/.netrwhist
