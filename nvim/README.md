@@ -20,10 +20,11 @@ backups/lazyvim_20260429_101214/
   snacks.nvim and the Kitty Graphics Protocol.
 - Work comfortably in Python projects with LSP, completion, formatting, and
   virtual environment selection.
-- Insert BibTeX citations from Zotero through the telescope-bibtex picker.
+- Insert citations straight from the Zotero database through the
+  telescope-zotero picker.
 - Keep Obsidian note workflows available.
 - Use Claude as the primary AI assistant — via avante.nvim for chat and
-  diff-apply, and Claude Code CLI via sidekick.nvim for agentic tasks.
+  diff-apply, and the Claude Code CLI in a snacks terminal for agentic tasks.
 - Keep the config explicit, small, and easy to modify.
 
 ---
@@ -65,13 +66,14 @@ lua/
 │   ├── lazy.lua
 │   └── options.lua
 └── plugins/
-    ├── ai.lua          ← avante.nvim + sidekick.nvim + Claude Code
+    ├── ai.lua          ← avante.nvim (Claude Code over ACP)
     ├── coding.lua
     ├── lsp.lua
     ├── python.lua      ← molten.nvim + venv-selector
-    ├── search.lua      ← snacks.picker (replaces Telescope)
+    ├── search.lua      ← snacks.picker + Telescope (Zotero citations)
+    ├── snacks.lua      ← placeholder; snacks.nvim is configured in ui.lua
     ├── ui.lua          ← snacks.nvim (dashboard, image, notifier, etc.)
-    └── writing.lua     ← VimTeX, quarto-nvim, otter.nvim, citations
+    └── writing.lua     ← VimTeX, quarto-nvim, otter.nvim, obsidian.nvim
 spell/
 ├── de.utf-8.spl
 └── de.utf-8.sug
@@ -119,12 +121,27 @@ Important editor defaults:
 
 ## Keymaps
 
+Leader groups (mirrors the which-key spec in `lua/plugins/ui.lua`):
+
+| Prefix | Group | Prefix | Group |
+| --- | --- | --- | --- |
+| `<leader>a` | ai | `<leader>q` | quit (and nothing else) |
+| `<leader>b` | buffer | `<leader>r` | run (incl. Quarto) |
+| `<leader>c` | code | `<leader>s` | session |
+| `<leader>e` | explorer | `<leader>t` | terminal |
+| `<leader>f` | find | `<leader>u` | ui |
+| `<leader>g` | git | `<leader>v` | latex |
+| `<leader>l` | lazy | `<leader>x` | diagnostics |
+| `<leader>m` | markdown | | |
+| `<leader>n` | notes (Obsidian) | | |
+| `<leader>p` | python | | |
+
 General:
 
 | Key | Action |
 | --- | --- |
 | `<leader><Space>` | Save the current file. |
-| `<leader>rr` | Save and run the current file with `python3 %`. |
+| `<leader>rf` | Save and run the current file with `python3 %`. |
 | `ga` | Jump backward in the jumplist. |
 | `gA` | Jump forward in the jumplist. |
 | `<leader>ut` | Reapply transparent background highlights. |
@@ -133,7 +150,7 @@ General:
 | `<leader>u2` | Switch to Catppuccin. |
 | `<leader>u3` | Switch to Kanagawa. |
 | `<leader>u4` | Switch to Rose Pine. |
-| `<leader>nh` | Clear search highlights. |
+| `<leader>uh` | Clear search highlights. |
 | `<C-h/j/k/l>` | Move between windows. |
 
 Package management:
@@ -148,13 +165,13 @@ Package management:
 | `<leader>lx` | Clean unused plugins. |
 | `<leader>lp` | Show Lazy startup/profile view. |
 
-Sessions (snacks.nvim):
+Sessions (persistence.nvim):
 
 | Key | Action |
 | --- | --- |
-| `<leader>qs` | Select a saved session. |
-| `<leader>ql` | Load the session for the current directory. |
-| `<leader>qd` | Stop saving the current session. |
+| `<leader>ss` | Select a saved session. |
+| `<leader>sl` | Load the session for the current directory. |
+| `<leader>sd` | Stop saving the current session. |
 
 Search (snacks.picker):
 
@@ -166,13 +183,15 @@ Search (snacks.picker):
 | `<leader>fh` | Help tags. |
 | `<leader>fr` | Recent files. |
 | `<leader>fn` | Notification history. |
-| `<leader>vc` | Insert BibTeX citation in TeX, Markdown, or Quarto. |
-| `<leader>vz` | Sync cited entries into the project bibliography. |
+
+Citations are the one picker still on Telescope: `<leader>vc` in TeX buffers,
+`<leader>nc` in Markdown, Quarto, and R Markdown.
 
 LaTeX:
 
 | Key | Action |
 | --- | --- |
+| `<leader>vc` | Insert Zotero citation (TeX buffers). |
 | `<leader>vb` | Compile with VimTeX. |
 | `<leader>vs` | Stop VimTeX compilation. |
 | `<leader>vv` | View PDF in Skim. |
@@ -181,47 +200,49 @@ LaTeX:
 | `<leader>ve` | Show VimTeX errors. |
 | `<leader>vi` | Show VimTeX info. |
 
-Quarto and Markdown:
+Quarto and Markdown (the `run` group):
 
 | Key | Action |
 | --- | --- |
-| `<leader>qp` | Preview Quarto document (browser). |
-| `<leader>qr` | Render Quarto document. |
-| `<leader>qc` | Close Quarto preview. |
-| `<leader>qe` | Execute current code cell (molten). |
-| `<leader>qE` | Execute all cells (molten). |
+| `<leader>rp` | Preview Quarto document (browser). |
+| `<leader>rr` | Render Quarto document (`quarto render` in a snacks terminal). |
+| `<leader>rc` | Close Quarto preview. |
+| `<leader>ra` | Activate Quarto LSP for the buffer. |
+| `<leader>rh` | Quarto help. |
 | `<leader>mp` | Toggle Markdown preview. |
 
-Python:
+Python (molten cell execution lives here too):
 
 | Key | Action |
 | --- | --- |
 | `<leader>pv` | Select Python virtual environment. |
 | `<leader>pi` | Initialize Jupyter kernel (molten). |
-| `<leader>pe` | Evaluate current cell or selection (molten). |
+| `<leader>pe` | Evaluate motion or visual selection (molten). |
+| `<leader>pc` | Execute current code cell (molten). |
+| `<leader>pC` | Execute all cells (molten). |
 | `<leader>ph` | Hide output window (molten). |
 | `<leader>ps` | Show output window (molten). |
 
-Obsidian:
+Notes (Obsidian):
 
 | Key | Action |
 | --- | --- |
-| `<leader>on` | Create note. |
-| `<leader>ot` | Insert template. |
-| `<leader>od` | Open daily note. |
-| `<leader>os` | Search notes. |
+| `<leader>nn` | Create note. |
+| `<leader>nt` | Insert template. |
+| `<leader>nd` | Open daily note. |
+| `<leader>ns` | Search notes. |
+| `<leader>nc` | Insert Zotero citation (Markdown, Quarto, R Markdown). |
 
 AI:
 
 | Key | Action |
 | --- | --- |
-| `<leader>aa` | Toggle avante.nvim chat panel. |
-| `<leader>ae` | Edit selection with avante. |
-| `<leader>ar` | Refresh avante response. |
-| `<leader>af` | Focus avante panel. |
-| `<leader>sc` | Toggle Claude Code in sidekick terminal pane. |
-| `<leader>ss` | Select AI CLI tool (sidekick). |
-| `<leader>sp` | Send prompt to active CLI (sidekick). |
+| `<leader>at` | Toggle the avante.nvim chat panel. |
+| `<leader>aa` | Ask avante about the buffer or selection. |
+| `<leader>an` | Start a new avante chat. |
+| `<leader>ah` | Browse avante chat history. |
+| `<leader>am` | Switch the avante model (`:AvanteACPModels`). |
+| `<leader>tc` | Toggle the Claude Code CLI in a snacks terminal. |
 
 ---
 
@@ -232,8 +253,8 @@ The UI layer lives in `lua/plugins/ui.lua` and is built entirely on
 
 ### snacks.nvim
 
-`snacks.nvim` is the central UI and utility layer, replacing alpha-nvim,
-persistence.nvim, and several standalone quality-of-life plugins.
+`snacks.nvim` is the central UI and utility layer, replacing alpha-nvim and
+several standalone quality-of-life plugins.
 
 Enabled snacks modules:
 
@@ -241,8 +262,8 @@ Enabled snacks modules:
 | --- | --- |
 | `snacks.dashboard` | Start page, replaces alpha-nvim. |
 | `snacks.image` | Inline image and math rendering via Kitty Graphics Protocol. |
-| `snacks.picker` | Fuzzy finder for files, grep, buffers, etc. Replaces Telescope. |
-| `snacks.session` | Per-project session saving and restoration. Replaces persistence.nvim. |
+| `snacks.picker` | Fuzzy finder for files, grep, buffers, etc. Replaces Telescope for everything but citations. |
+| `snacks.explorer` | Sidebar file tree (`<leader>e`). |
 | `snacks.notifier` | Prettier `vim.notify` notifications. |
 | `snacks.indent` | Indent guides and scope highlighting. |
 | `snacks.scope` | Scope detection for text objects. |
@@ -270,8 +291,9 @@ for image-enabled document types.
 ### which-key.nvim
 
 `which-key.nvim` is kept alongside snacks.nvim for the leader-key cheatsheet.
-It uses rounded borders, compact spacing, and named groups for: AI, code, find,
-Lazy, Markdown, notes, Obsidian, Python, Quarto, UI, LaTeX, and diagnostics.
+It uses rounded borders, compact spacing, and named groups for: AI, buffer,
+code, explorer, find, git, Lazy, Markdown, notes, Python, quit, run, session,
+terminal, UI, LaTeX, and diagnostics. See the leader-group table above.
 
 ### Colorschemes
 
@@ -453,9 +475,10 @@ bitmaps directly in the buffer via snacks.image + tectonic/pdflatex.
 Quarto support is provided by `quarto-dev/quarto-nvim` and `jmbuhr/otter.nvim`.
 It is used in two complementary modes:
 
-- **Full render** (`<leader>qr`): runs `quarto render` and opens the output
-  in the browser or Skim. Used for reviewing the final document.
-- **Inline execution** (`<leader>qe`): runs the cell under the cursor via
+- **Full render** (`<leader>rr`): runs `quarto render` in a snacks terminal so
+  the render log stays readable. Used for reviewing the final document.
+  `<leader>rp` opens the live preview in the browser.
+- **Inline execution** (`<leader>pc`): runs the cell under the cursor via
   molten.nvim and displays output inline, without a full render. Used during
   active writing and analysis.
 
@@ -463,52 +486,33 @@ Embedded language support is enabled for: R, Python, Julia, Bash, HTML.
 
 ### Citations
 
-`telescope-bibtex.nvim` backs the citation picker and reads the global
-bibliography from:
+`jmbuhr/telescope-zotero.nvim` backs the citation picker. Telescope is kept in
+this config for that one purpose; everything else uses snacks.picker.
+
+The picker reads the Zotero SQLite database directly — there is no BibTeX
+export step and no "keep updated" auto-export to maintain:
 
 ```text
-/Users/jonasvonstein/Zotero/references.bib
+~/Zotero/zotero.sqlite     library and citation keys
+~/Zotero/storage           attachments
 ```
 
-The citation picker searches by author, year, and title. Triggered with
-`<leader>vc` in TeX, Markdown, Quarto, and R Markdown files.
+Citation keys come from Zotero's native `citationKey` field, which Better
+BibTeX now writes into `zotero.sqlite`; the old `better-bibtex.sqlite` is no
+longer read.
 
-Picker actions, formatted for the filetype of the buffer you started in:
+Picking an entry inserts the citation and appends **only that entry** to the
+project `.bib` named by `\addbibresource{}` / `\bibliography{}` in TeX or
+`bibliography:` in Quarto, skipping it if the key is already present. So the
+project bibliography stays small enough to read in a diff and hand-added
+entries are never dropped.
 
-| Key | TeX | Markdown / Quarto |
+Triggers, and the format inserted per filetype:
+
+| Key | Filetypes | Inserts |
 | --- | --- | --- |
-| `<CR>` | `\citep{key}` | `[@key]` |
-| `<C-t>` | `\citet{key}` | `@key` |
-| `<C-k>` | `key` | `key` |
-| `<C-e>` | full BibTeX entry | full BibTeX entry |
-| `<C-c>` | plain-text citation | plain-text citation |
-
-#### Zotero sync
-
-`core.zotero` pulls bibliography data from Zotero over Better BibTeX's local
-HTTP endpoint, rather than relying on a BBT "keep updated" auto-export. There
-are two levels:
-
-| Level | File | Contents | Runs |
-| --- | --- | --- | --- |
-| Global | `~/Zotero/references.bib` | whole library | before the picker opens; `:ZoteroSync` |
-| Project | the project's own `.bib` | only the entries actually cited | before `<leader>vb` compiles; `:ZoteroSyncProject`, `<leader>vz` |
-
-The global file is the pool the picker searches, so anything in Zotero is
-citable. The project file is what the document loads, and it stays small
-enough to read in a diff.
-
-The project sync finds the target `.bib` from `\projectbibliographyfile`,
-`\addbibresource`, or `\bibliography`, then scans the project's `.tex`, `.md`,
-and `.qmd` files for cited keys — ignoring comments, `\verb` spans, verbatim
-environments and fenced code, so documentation that mentions `\cite{key}` does
-not contribute phantom entries. `\nocite{*}` exports the whole library.
-
-Cited keys that Zotero does not have are **kept** from the existing `.bib`
-rather than dropped, so hand-added entries survive a sync; keys found in
-neither are reported as a warning. Zotero must be running with Better BibTeX
-installed — if it is not reachable, the existing `.bib` is left untouched and
-the compile proceeds with it.
+| `<leader>vc` | `tex` | `\citep{key}` |
+| `<leader>nc` | `markdown`, `quarto`, `rmd` | `[@key]` |
 
 ### Obsidian
 
@@ -526,8 +530,10 @@ from `Templates`.
 
 ## AI Stack
 
-The AI layer is split into two tools with distinct roles. Both live in
-`lua/plugins/ai.lua`.
+The AI layer is two things with distinct roles: avante.nvim, configured in
+`lua/plugins/ai.lua`, and a plain terminal toggle for the Claude Code CLI,
+defined in `lua/core/keymaps.lua`. Both drive the same local `claude` binary,
+so there is one authentication and one MCP configuration between them.
 
 ### avante.nvim — chat, image/PDF input, diff-apply
 
@@ -544,7 +550,11 @@ Cursor-like side panel within Neovim.
   accept or reject changes line-by-line.
 - Context control: add files, selections, or diagnostics to the conversation
   with a keypress.
-- Supports Claude, OpenAI, Gemini, Copilot, and ACP-compatible providers.
+- Drives the local `claude` binary over the Agent Client Protocol, so
+  authentication is Claude Code's own — no API keys in the Neovim config.
+
+Avante's ~20 default keymaps are disabled (`behaviour.auto_set_keymaps`); only
+the five below are bound, which keeps the rest of `<leader>a` free.
 
 **Config (`lua/plugins/ai.lua`):**
 
@@ -553,54 +563,57 @@ Cursor-like side panel within Neovim.
   "yetone/avante.nvim",
   event = "VeryLazy",
   opts = {
-    provider = "claude",
+    provider = "claude-code",
     mode = "agentic",
+    acp_providers = {
+      ["claude-code"] = { command = "claude-agent-acp" },
+    },
   },
   build = "make",
 },
 ```
 
+The full spec also pins `CLAUDE_CODE_EXECUTABLE` to the native arm64 `claude`
+at `/opt/homebrew/bin/claude`. The x86_64 cask in `/usr/local/bin` is
+Bun-compiled and needs AVX, which Rosetta does not emulate, so it hangs on
+startup — and it comes first on `PATH`. See the comments in `ai.lua`.
+
 **Keymaps:**
 
 | Key | Action |
 | --- | --- |
-| `<leader>aa` | Toggle avante chat panel. |
-| `<leader>ae` | Edit selection with avante. |
-| `<leader>ar` | Refresh avante response. |
-| `<leader>af` | Focus avante panel. |
+| `<leader>at` | Toggle avante chat panel. |
+| `<leader>aa` | Ask about the buffer or selection. |
+| `<leader>an` | New chat. |
+| `<leader>ah` | Chat history. |
+| `<leader>am` | Switch model (`:AvanteACPModels`). |
 
-### sidekick.nvim — Claude Code CLI for agentic tasks
+### Claude Code CLI in a snacks terminal
 
-`folke/sidekick.nvim` wraps the **Claude Code CLI** in a native Neovim terminal
-pane. Use this for larger, multi-file refactoring tasks and autonomous agentic
-workflows where Claude Code needs file system access and shell execution.
+For larger, multi-file refactoring and autonomous agentic work — where Claude
+Code needs file system access and shell execution — `<leader>tc` toggles the
+**Claude Code CLI** in a `Snacks.terminal` split rooted at the current working
+directory. There is no wrapper plugin: it is a single `Snacks.terminal.toggle`
+in `lua/core/keymaps.lua`, and it resolves the same native arm64 binary avante
+uses.
 
 Claude Code runs with its own authentication (set up once with `claude /login`)
-and its own MCP server configuration — no API keys in Neovim config required.
+and its own MCP server configuration.
 
-**Key capabilities:**
-
-- Claude Code CLI runs in a scratch terminal window inside Neovim.
-- Context injection: buffer content, cursor position, and diagnostics sent to
-  Claude Code via helper prompts.
-- Copilot LSP "Next Edit Suggestions" (NES): multi-line diff suggestions
-  triggered automatically when you pause typing; navigate and accept
-  hunk-by-hunk.
-- Works alongside avante — use avante for conversation and targeted edits, use
-  sidekick/Claude Code for larger autonomous tasks.
+Use avante for conversation, targeted edits, and image/PDF input; use the
+terminal toggle when you want the full CLI.
 
 **Keymaps:**
 
 | Key | Action |
 | --- | --- |
-| `<leader>sc` | Toggle Claude Code pane (sidekick). |
-| `<leader>ss` | Select AI CLI tool. |
-| `<leader>sp` | Send prompt with context to CLI. |
+| `<leader>tc` | Toggle the Claude Code CLI terminal. |
 
 **Install Claude Code:**
 
 ```bash
 npm install -g @anthropic-ai/claude-code
+npm install -g @agentclientprotocol/claude-agent-acp
 claude /login
 ```
 
@@ -627,7 +640,7 @@ Formatters configured through `conform.nvim`:
 
 Format on save is enabled for most programming files. It is disabled for
 Markdown, Quarto, and TeX so prose and manuscripts are not rewritten
-unexpectedly.
+unexpectedly. `<leader>cf` formats the buffer on demand.
 
 ---
 
@@ -635,7 +648,8 @@ unexpectedly.
 
 | Plugin | Purpose | Replaces |
 | --- | --- | --- |
-| `folke/snacks.nvim` | Dashboard, image rendering, picker, sessions, notifier, QoL | alpha-nvim, Telescope, persistence.nvim |
+| `folke/snacks.nvim` | Dashboard, image rendering, picker, explorer, terminal, notifier, QoL | alpha-nvim, Telescope |
+| `folke/persistence.nvim` | Per-project session save and restore | — |
 | `folke/which-key.nvim` | Leader-key cheatsheet | — |
 | `benlubas/molten-nvim` | Jupyter kernel execution, inline cell output | — |
 | `3rd/image.nvim` | Image backend for molten cell output | — |
@@ -644,8 +658,8 @@ unexpectedly.
 | `jmbuhr/otter.nvim` | Embedded language LSP completion | — |
 | `lervag/vimtex` | LaTeX editing, compilation, Skim sync | — |
 | `epwalsh/obsidian.nvim` | Obsidian note workflows | — |
+| `jmbuhr/telescope-zotero.nvim` | Zotero citation picker (with `telescope.nvim`) | telescope-bibtex |
 | `yetone/avante.nvim` | AI chat, image/PDF input, diff-apply | Copilot Chat, ChatGPT.nvim |
-| `folke/sidekick.nvim` | Claude Code CLI pane, Copilot NES | — |
 | `linux-cultist/venv-selector.nvim` | Python virtual environment picker | — |
 | `stevearc/conform.nvim` | Formatting | — |
 | `nvim-ufo` | Fold management | — |
@@ -679,8 +693,9 @@ pip install pynvim jupyter-client ipykernel \
             plotly kaleido matplotlib pillow \
             cairosvg pnglatex pyperclip nbformat
 
-# Claude Code CLI (for sidekick.nvim)
+# Claude Code CLI (for the <leader>tc terminal toggle and avante's ACP provider)
 npm install -g @anthropic-ai/claude-code
+npm install -g @agentclientprotocol/claude-agent-acp
 claude /login
 
 # LaTeX compilation (VimTeX)
@@ -719,9 +734,8 @@ Inside Neovim, run in order:
 | LaTeX PDF preview | ✅ | Skim with SyncTeX |
 | PDF page preview inside Neovim | ✅ | snacks.image + Ghostscript |
 | AI chat with image/PDF paste | ✅ | avante.nvim |
-| AI agentic coding (multi-file, shell) | ✅ | Claude Code via sidekick.nvim |
+| AI agentic coding (multi-file, shell) | ✅ | Claude Code CLI in a snacks terminal (`<leader>tc`) |
 | Inline AI diff-apply | ✅ | avante.nvim agentic mode |
-| Copilot Next Edit Suggestions | ✅ | sidekick.nvim + Copilot LSP |
 | snacks.image as molten image provider | ⚠️ | Not yet upstream; image.nvim still used for molten |
 
 ---

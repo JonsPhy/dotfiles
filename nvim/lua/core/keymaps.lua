@@ -1,7 +1,8 @@
 local map = vim.keymap.set
 
 map("n", "<leader><Space>", "<cmd>w<CR>", { desc = "Write file" })
-map("n", "<leader>rr", "<cmd>write<CR><cmd>!python3 %<CR>", { desc = "Run current Python file" })
+-- <leader>rr is Quarto render (writing.lua); this one is the plain-file runner.
+map("n", "<leader>rf", "<cmd>write<CR><cmd>!python3 %<CR>", { desc = "Run current Python file" })
 map("n", "ga", "<C-o>", { desc = "Jump back" })
 map("n", "gA", "<C-i>", { desc = "Jump forward" })
 
@@ -16,7 +17,9 @@ map("n", "<leader>u4", "<cmd>colorscheme rose-pine<CR>", { desc = "Rose Pine" })
 map("n", "<leader>uz", function() Snacks.zen() end, { desc = "Zen mode" })
 map("n", "<leader>uZ", function() Snacks.zen.zoom() end, { desc = "Zoom (keep statusline)" })
 
-map("n", "<leader>nh", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
+-- Under <leader>u, not <leader>n: clearing the highlight is a UI toggle, and
+-- <leader>n is the notes (Obsidian) group.
+map("n", "<leader>uh", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
 -- Quit. `confirm` is on, so a plain :qa on a modified buffer drops into a
 -- blocking Y/N/C prompt that is easy to miss with cmdheight=0 — hence one
@@ -64,11 +67,11 @@ map("n", "<leader>gt", function() Snacks.picker.git_stash() end, { desc = "Stash
 map("n", "<leader>gB", function() Snacks.git.blame_line() end, { desc = "Blame line" })
 map({ "n", "v" }, "<leader>go", function() Snacks.gitbrowse() end, { desc = "Open in GitHub" })
 
--- Claude Code CLI in snacks terminal (<leader>sc)
+-- Claude Code CLI in snacks terminal (<leader>tc -- terminal group)
 -- Deferred in function so Snacks is available at key-press time (not load time)
 -- /opt/homebrew is the native arm64 build; the /usr/local cask is x86_64 and
 -- hangs under Rosetta (Bun requires AVX). See lua/plugins/ai.lua.
-map("n", "<leader>sc", function()
+map("n", "<leader>tc", function()
   local claude = vim.fn.executable("/opt/homebrew/bin/claude") == 1 and "/opt/homebrew/bin/claude"
     or vim.fn.exepath("claude")
   Snacks.terminal.toggle(claude, { cwd = vim.fn.getcwd() })

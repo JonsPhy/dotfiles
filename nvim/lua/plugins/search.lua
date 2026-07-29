@@ -59,7 +59,7 @@ return {
         desc = "Insert citation",
       },
       {
-        "<leader>oc",
+        "<leader>nc",
         function() require("telescope").extensions.zotero.zotero() end,
         ft = { "markdown", "quarto", "rmd" },
         desc = "Insert citation",

@@ -117,20 +117,20 @@ return {
       },
     },
     keys = {
-      { "<leader>qp", "<cmd>QuartoPreview<CR>", ft = "quarto", desc = "Preview Quarto" },
+      { "<leader>rp", "<cmd>QuartoPreview<CR>", ft = "quarto", desc = "Preview Quarto" },
       -- quarto-nvim has no :QuartoRender — rendering is only a CLI call, so it
       -- runs in a snacks terminal where the render log stays readable.
       {
-        "<leader>qr",
+        "<leader>rr",
         function()
           Snacks.terminal.open({ "quarto", "render", vim.fn.expand("%:p") }, { interactive = false })
         end,
         ft = "quarto",
         desc = "Render Quarto",
       },
-      { "<leader>qc", "<cmd>QuartoClosePreview<CR>", ft = "quarto", desc = "Close Quarto preview" },
-      { "<leader>qa", "<cmd>QuartoActivate<CR>", ft = "quarto", desc = "Activate Quarto LSP" },
-      { "<leader>qh", "<cmd>QuartoHelp<CR>", ft = "quarto", desc = "Quarto help" },
+      { "<leader>rc", "<cmd>QuartoClosePreview<CR>", ft = "quarto", desc = "Close Quarto preview" },
+      { "<leader>ra", "<cmd>QuartoActivate<CR>", ft = "quarto", desc = "Activate Quarto LSP" },
+      { "<leader>rh", "<cmd>QuartoHelp<CR>", ft = "quarto", desc = "Quarto help" },
     },
   },
 
@@ -187,10 +187,10 @@ return {
       },
     },
     keys = {
-      { "<leader>on", "<cmd>ObsidianNew<CR>", desc = "New note" },
-      { "<leader>ot", "<cmd>ObsidianTemplate<CR>", desc = "Note template" },
-      { "<leader>od", "<cmd>ObsidianToday<CR>", desc = "Daily note" },
-      { "<leader>os", "<cmd>ObsidianSearch<CR>", desc = "Search notes" },
+      { "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New note" },
+      { "<leader>nt", "<cmd>ObsidianTemplate<CR>", desc = "Note template" },
+      { "<leader>nd", "<cmd>ObsidianToday<CR>", desc = "Daily note" },
+      { "<leader>ns", "<cmd>ObsidianSearch<CR>", desc = "Search notes" },
     },
   },
 }

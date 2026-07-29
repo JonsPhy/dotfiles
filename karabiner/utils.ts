@@ -192,22 +192,32 @@ export function shell(
 }
 
 /**
- * Shortcut for managing window sizing with Rectangle
+ * Shortcut for "Open an app" command (of which there are a bunch)
  */
-export function rectangle(name: string): LayerCommand {
+export function app(name: string): LayerCommand {
   return {
-    to: [
-      {
-        shell_command: `open -g rectangle://execute-action?name=${name}`,
-      },
-    ],
-    description: `Window: ${name}`,
+    ...open(`-a '${name}.app'`),
+    // Human-readable, not the shell command: this description is the source for
+    // the generated keybinding panel (KEYBINDINGS.md §9.5).
+    description: `Open ${name}`,
   };
 }
 
 /**
- * Shortcut for "Open an app" command (of which there are a bunch)
+ * Shortcut for the private Hyper -> AeroSpace transport chord.
+ *
+ * Hyper is a Karabiner variable, not real modifiers, so AeroSpace cannot bind
+ * it. Karabiner emits Ctrl+Shift+Cmd+<key> instead and AeroSpace listens for
+ * that. It is never typed by hand. See KEYBINDINGS.md §4.1.
  */
-export function app(name: string): LayerCommand {
-  return open(`-a '${name}.app'`);
+export function aerospace(key_code: KeyCode, description: string): LayerCommand {
+  return {
+    to: [
+      {
+        key_code,
+        modifiers: ["left_control", "left_shift", "left_command"],
+      },
+    ],
+    description,
+  };
 }

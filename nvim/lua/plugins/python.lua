@@ -31,8 +31,11 @@ return {
       { "<leader>pe", "<cmd>MoltenEvaluateVisual<CR>", mode = "v", desc = "Evaluate selection" },
       { "<leader>ph", "<cmd>MoltenHideOutput<CR>", desc = "Hide output" },
       { "<leader>ps", "<cmd>MoltenShowOutput<CR>", desc = "Show output" },
-      { "<leader>qe", "<cmd>MoltenRunCell<CR>", ft = { "python", "quarto" }, desc = "Execute cell" },
-      { "<leader>qE", "<cmd>MoltenReevaluateAll<CR>", ft = { "python", "quarto" }, desc = "Execute all cells" },
+      -- Cell execution stays with the rest of Molten under <leader>p: <leader>pe
+      -- above evaluates a motion/selection, these two the enclosing cell / all
+      -- cells. Same plugin, same mental model, one prefix.
+      { "<leader>pc", "<cmd>MoltenRunCell<CR>", ft = { "python", "quarto" }, desc = "Execute cell" },
+      { "<leader>pC", "<cmd>MoltenReevaluateAll<CR>", ft = { "python", "quarto" }, desc = "Execute all cells" },
     },
   },
 

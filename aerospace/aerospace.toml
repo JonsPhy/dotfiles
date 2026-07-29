@@ -32,74 +32,100 @@ outer.top = 20
 outer.right = 20
 
 # Main Binding Mode
+#
+# Every binding here is the private transport chord Ctrl-Shift-Cmd emitted by
+# Karabiner when Hyper + <key> is pressed (see KEYBINDINGS.md §4.1). It is never
+# typed by hand, and every entry has a Hyper counterpart in karabiner/rules.ts.
 [mode.main.binding]
-# Resize (Control Modifiers: Shift-Option-Command)
-shift-alt-cmd-minus = 'resize smart -50'  # Shrink window minus=ß
-shift-alt-cmd-0 = 'resize smart +50'      # Expand window
+# Focus (Hyper + hjkl)
+ctrl-shift-cmd-h = 'focus left'
+ctrl-shift-cmd-j = 'focus down'
+ctrl-shift-cmd-k = 'focus up'
+ctrl-shift-cmd-l = 'focus right'
 
-# Layout Switch (Control Modifiers: Shift-Option-Command)
-shift-alt-cmd-period = 'layout tiles horizontal vertical' # Switch to tiled layout
-shift-alt-cmd-comma = 'layout accordion horizontal vertical'
+# Fullscreen (Hyper + f)
+ctrl-shift-cmd-f = 'fullscreen'
 
-# Focus (Control Modifiers: Shift-Option-Command)
-shift-alt-cmd-h = 'focus left'
-shift-alt-cmd-j = 'focus down'
-shift-alt-cmd-k = 'focus up'
-shift-alt-cmd-l = 'focus right'
+# Workspaces (Hyper + 1234)
+ctrl-shift-cmd-1 = 'workspace 1'  # 1 = 1
+ctrl-shift-cmd-2 = 'workspace 2'  # 2 = i
+ctrl-shift-cmd-3 = 'workspace 3'  # 3 = o
+ctrl-shift-cmd-4 = 'workspace 4'  # 4 = LaTeX
 
-# Move (Move Modifiers: Control-Option-Command)
-ctrl-alt-cmd-h = 'move left'
-ctrl-alt-cmd-j = 'move down'
-ctrl-alt-cmd-k = 'move up'
-ctrl-alt-cmd-l = 'move right'
+# Previous workspace (Hyper + tab)
+ctrl-shift-cmd-tab = 'workspace-back-and-forth'
 
-# Workspaces (Control Modifiers: Shift-Option-Command)
-shift-alt-cmd-u = 'workspace 1'
-shift-alt-cmd-i = 'workspace i'
-shift-alt-cmd-o = 'workspace o'
-shift-alt-cmd-p = 'workspace LaTeX'
+# Window mode (Hyper + w)
+ctrl-shift-cmd-w = 'mode window'
 
-shift-alt-cmd-f = 'fullscreen'
-
-
-# Move nodes to workspaces (Move Modifiers: Control-Option-Command)
-ctrl-alt-cmd-u = 'move-node-to-workspace 1'
-ctrl-alt-cmd-i = 'move-node-to-workspace i'
-ctrl-alt-cmd-o = 'move-node-to-workspace o'
-ctrl-alt-cmd-p = 'move-node-to-workspace LaTeX'
-
-
-# Workspace and Monitor Switching (Control Modifiers: Shift-Option-Command)
-shift-alt-cmd-tab = 'workspace-back-and-forth'
-ctrl-alt-cmd-tab = 'move-workspace-to-monitor --wrap-around next'
-
-
-
-
-
-
-# Service Mode
-
-shift-alt-cmd-m = 'mode manage'
-
-[mode.manage.binding]
+# Window Mode
+#
+# Entered with Hyper + w, exited with Esc (KEYBINDINGS.md §4.1). Bare keys, no
+# modifiers held.
+#
+# Two classes of binding, and the split is deliberate:
+#
+#   ADJUSTMENTS stay in the mode, because you almost never nudge a window
+#   exactly once — move it, resize it, look at it, move it again. Making these
+#   one-shot would mean re-entering the mode for every nudge.
+#
+#   PLACEMENTS exit, because they are finished when they land: once the window
+#   is on another workspace or monitor, there is nothing left to repeat and
+#   staying in a mode that swallows your keystrokes is a trap.
+#
+# There is no on-screen mode indicator, so Esc is the way out.
+[mode.window.binding]
 esc = ['reload-config', 'mode main']
-r = ['flatten-workspace-tree', 'mode main']
-f = ['layout floating tiling', 'mode main']
-backspace = ['close-all-windows-but-current', 'mode main']
 
-ctrl-alt-cmd-h = ['join-with left', 'mode main']
-ctrl-alt-cmd-j = ['join-with down', 'mode main']
-ctrl-alt-cmd-k = ['join-with up', 'mode main']
-ctrl-alt-cmd-l = ['join-with right', 'mode main']
+# --- Adjustments: stay in the mode ---
+
+# Move the window
+h = 'move left'
+j = 'move down'
+k = 'move up'
+l = 'move right'
+
+# Join with (shift + hjkl)
+shift-h = 'join-with left'
+shift-j = 'join-with down'
+shift-k = 'join-with up'
+shift-l = 'join-with right'
+
+# Resize (ctrl + hjkl). Ctrl is free here precisely because window mode
+# captures every keystroke — no application can see these, so using Ctrl costs
+# nothing and keeps direction on hjkl per §3.2. Replaces the old
+# shift-alt-cmd-minus / -0 pair, which broke both §2.3 and §2.4.
+ctrl-h = 'resize width -50'
+ctrl-l = 'resize width +50'
+ctrl-j = 'resize height +50'
+ctrl-k = 'resize height -50'
+
+# --- Placements: perform and exit ---
+
+# Toggle floating
+f = ['layout floating tiling', 'mode main']
+
+# Move to next monitor
+m = ['move-node-to-monitor --wrap-around next', 'mode main']
+
+# Flatten workspace tree
+r = ['flatten-workspace-tree', 'mode main']
+
+# Toggle layout
+t = ['layout tiles accordion', 'mode main']
+
+# Move window to workspace
+1 = ['move-node-to-workspace 1', 'mode main']  # 1 = 1
+2 = ['move-node-to-workspace 2', 'mode main']  # 2 = i
+3 = ['move-node-to-workspace 3', 'mode main']  # 3 = o
+4 = ['move-node-to-workspace 4', 'mode main']  # 4 = LaTeX
 
 
 [[on-window-detected]]
 if.app-id = 'dev.warp.Warp-Stable'
-run = "move-node-to-workspace LaTeX"
+run = "move-node-to-workspace 4"  # 4 = LaTeX
 
 
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.pycharm.ce'
-run = "move-node-to-workspace P"
-
+run = "move-node-to-workspace 3"  # 3 = o (was 'P', which had no binding)

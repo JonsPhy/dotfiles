@@ -31,3 +31,26 @@ MSG
   exit 1
 fi
 echo "pre-commit: clean."
+
+# Keep CHEATSHEET.md in step with the configs it is generated from. This is the
+# cheap half of the KEYBINDINGS.md §8 guardrail: the expensive half diffs every
+# binding against §4, but simply refusing to let the generated file go stale
+# catches most of the drift for a two-line hook.
+if git diff --cached --name-only | grep -qE '^(ghostty/config|aerospace/aerospace\.toml|karabiner/karabiner\.json|nvim/lua/|zen/|corne/layout\.vil|scripts/gen-cheatsheet\.py)'; then
+  if ! python3 scripts/gen-cheatsheet.py --check >/dev/null 2>&1; then
+    cat >&2 <<'MSG'
+
+pre-commit: CHEATSHEET.md is stale - commit aborted.
+
+  A config that feeds the cheatsheet changed but the cheatsheet was not
+  regenerated. Run:
+
+      python3 scripts/gen-cheatsheet.py && git add CHEATSHEET.md
+
+  To bypass deliberately: git commit --no-verify
+
+MSG
+    exit 1
+  fi
+  echo "pre-commit: CHEATSHEET.md up to date."
+fi
