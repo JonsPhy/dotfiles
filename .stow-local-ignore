@@ -1,0 +1,25 @@
+# Everything in the repo root is stowed into ~/.config as a directory symlink
+# (dotfiles/nvim -> ~/.config/nvim), so anything that does NOT belong in
+# ~/.config has to be listed here. Paths starting with / are anchored at the
+# repo root; bare names would match at any depth and could hit nested files.
+#
+# NOTE: providing this file replaces stow's built-in default ignore list, so
+# the VCS/metadata entries below have to be spelled out too.
+
+# Packages with a different stow target (see bootstrap.sh)
+/zsh
+
+# Not config: repo tooling and machine-local state
+/bootstrap\.sh
+/README\.md
+/scripts
+/raycast
+/\.git
+/\.githooks
+/\.gitignore
+/\.gitleaks\.toml
+/\.stow-local-ignore
+/\.claude
+
+# macOS junk
+\.DS_Store

@@ -1,0 +1,31 @@
+# gitleaks configuration for this dotfiles repo.
+# Run manually:  gitleaks detect --no-banner --redact -v
+# Runs automatically via .githooks/pre-commit (see bootstrap.sh).
+
+[extend]
+useDefault = true
+
+[[rules]]
+# Neovim's lazy-lock.json is a list of git SHAs. High entropy, zero secrets.
+id = "lazy-lock-noise"
+description = "placeholder so the allowlist below has a home"
+regex = '''$^'''
+
+[allowlist]
+description = "Paths and patterns that are not secrets in this repo"
+
+paths = [
+  # Compiled Raycast extension bundles. Gitignored now, but keep the allowlist
+  # so historical scans (`gitleaks detect` walks all commits) stay quiet.
+  # The hits are Raycast's own public OAuth client IDs for Asana/Linear/Slack,
+  # identical in every Raycast installation.
+  '''raycast/extensions/.*''',
+
+  # Plugin pins: 40-char git SHAs, flagged as generic high-entropy strings.
+  '''nvim/\.config/nvim/lazy-lock\.json''',
+]
+
+regexes = [
+  # Karabiner and Raycast configs contain UUIDs for devices/commands.
+  '''[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}''',
+]

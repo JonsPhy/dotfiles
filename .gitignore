@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Raycast ships compiled extension bundles (~166 MB). They are build artifacts,
+# reinstalled by Raycast itself, and they are the only source of gitleaks
+# findings in this repo (Raycast's own Asana/Linear/Slack OAuth client IDs
+# baked into every install). Keep the scripts and AI presets, drop the bundles.
+raycast/extensions/
+
+# Secrets — never commit these
+*.pem
+*.key
+*_rsa
+*_ed25519
+.env
+.env.*
+**/secrets.*
+**/credentials.json
+.claude/settings.local.json
+
+# Editor / tooling state
+nvim/lazy-lock.json.bak
+**/.netrwhist
+**/*.swp
+**/node_modules/
+
+# Shell history should never be tracked
+.zsh_history
+.zcompdump*

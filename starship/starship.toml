@@ -1,0 +1,84 @@
+# Starship prompt — Catppuccin Mocha, matching the Neovim colorscheme.
+#
+# Layout borrowed from omerxx/dotfiles: a minimal left prompt (directory +
+# character only) with the context pushed to a right-aligned prompt, so the
+# line you actually type on starts near the left edge instead of after a
+# chain of powerline blocks.
+#
+# Segments and their trigger conditions are unchanged from the previous
+# powerline version — only styling and placement differ.
+
+format = """$directory$character"""
+right_format = """$git_branch$git_status$python$conda$cmd_duration"""
+
+add_newline = true
+command_timeout = 1000
+palette = "catppuccin_mocha"
+
+[directory]
+style = "bold lavender"
+format = "[$path]($style)[$read_only]($read_only_style) "
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " "
+read_only_style = "red"
+
+[directory.substitutions]
+"~/dotfiles/nvim" = " nvim"
+"Documents" = " "
+"Downloads" = " "
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[git_branch]
+symbol = " "
+style = "green"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "peach"
+format = "[($all_status$ahead_behind)]($style) "
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "$"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# Scientific-writing setup: which interpreter is active matters constantly.
+[python]
+symbol = " "
+style = "yellow"
+format = "[$symbol($version)(\\($virtualenv\\))]($style) "
+
+[conda]
+symbol = " "
+style = "teal"
+format = "[$symbol$environment]($style) "
+ignore_base = false
+
+[cmd_duration]
+min_time = 2000
+style = "overlay1"
+format = "[ $duration]($style) "
+
+[palettes.catppuccin_mocha]
+base = "#1e1e2e"
+text = "#cdd6f4"
+subtext0 = "#a6adc8"
+overlay1 = "#7f849c"
+surface0 = "#313244"
+green = "#a6e3a1"
+peach = "#fab387"
+yellow = "#f9e2af"
+teal = "#94e2d5"
+mauve = "#cba6f7"
+lavender = "#b4befe"
+red = "#f38ba8"

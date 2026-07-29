@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Block commits containing secrets. Installed by bootstrap.sh via
+#   git config core.hooksPath .githooks
+# Bypass in an emergency with: git commit --no-verify
+
+set -euo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks not installed - skipping secret scan." >&2
+  echo "            brew install gitleaks" >&2
+  exit 0
+fi
+
+# NOTE: must be `git diff --cached | gitleaks stdin`.
+# On gitleaks 8.30 both `gitleaks protect --staged` and `gitleaks git --staged`
+# exit 0 on a staged AWS key -- they scan commits, not the staged diff, so a
+# hook built on them silently passes everything. Verified with a canary.
+echo "pre-commit: scanning staged changes for secrets..."
+if ! git diff --cached | gitleaks stdin --no-banner --redact --config .gitleaks.toml; then
+  cat >&2 <<'MSG'
+
+pre-commit: SECRETS DETECTED - commit aborted.
+
+  * If real: remove the secret, then rotate it. It is already on disk and
+    may be in your shell history.
+  * If a false positive: add a path or regex to the [allowlist] in
+    .gitleaks.toml, or append `# gitleaks:allow` to the offending line.
+  * To bypass deliberately: git commit --no-verify
+
+MSG
+  exit 1
+fi
+echo "pre-commit: clean."

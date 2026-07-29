@@ -1,0 +1,83 @@
+# Ghostty — see `ghostty +show-config --default --docs` for every option.
+
+# ── Appearance ───────────────────────────────────────────────────────────────
+# Ghostty's theme names are the display names, not slugs: "Catppuccin Mocha",
+# not catppuccin-mocha. `ghostty +list-themes` lists all 463.
+theme = Catppuccin Mocha
+
+# Exact family name from `ghostty +list-fonts` — "MesloLGS Nerd Font" alone
+# does not match; the installed family is the Mono variant.
+font-family = MesloLGS Nerd Font Mono
+font-size = 14
+font-thicken = true
+
+# Neovim's colorschemes are all transparent = true, so the terminal background
+# is what actually shows through.
+background-opacity = 0.92
+background-blur = 20
+
+window-padding-x = 12
+window-padding-y = 10
+window-padding-balance = true
+window-decoration = auto
+window-save-state = always
+
+# macOS native tabs rather than Ghostty's own
+macos-titlebar-style = tabs
+
+# `false`, and it matters on this machine. The layout here is German, where the
+# whole programming-symbol set is Option-composed — { } are option+8/9, [ ] are
+# option+5/6, \ is option+shift+7, | is option+7, @ is option+l, ~ is option+n.
+# `true` makes Ghostty deliver those as Alt sequences instead of the composed
+# character, so option+8 arrives as ESC 8: in Neovim the ESC drops out of insert
+# mode and the digit lands as a count. Ghostty itself only defaults this to
+# `true` for U.S. Standard and U.S. International layouts.
+#
+# Not `right` either: that only frees the left Option, and which Option key you
+# reach for when typing a brace is a matter of habit, so it fixes the problem
+# only half the time.
+#
+# Cost: Alt bindings whose Option sequence composes a printable character are
+# lost — in practice just fzf's Alt-C (option+c is `ç` here). Ghostty still
+# treats Option as Alt automatically whenever the sequence produces no
+# printable character, so the rest keep working. The cmd+alt+arrow split
+# bindings below are unaffected: keybind matching is independent of this.
+#
+# NOTE: this is applied when a surface is created. Changing it needs a full
+# Cmd+Q and relaunch — a config reload or a new tab is not enough.
+macos-option-as-alt = false
+
+cursor-style = block
+cursor-style-blink = false
+mouse-hide-while-typing = true
+
+# ── Shell ────────────────────────────────────────────────────────────────────
+# Ghostty injects shell integration automatically for zsh; this enables the
+# extra features (cursor shape, sudo prompt awareness, working-dir reporting).
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
+
+scrollback-limit = 100000
+copy-on-select = clipboard
+confirm-close-surface = false
+
+# ── Keybindings ──────────────────────────────────────────────────────────────
+# Splits, matching a Neovim-ish muscle memory
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+w=close_surface
+keybind = cmd+alt+left=goto_split:left
+keybind = cmd+alt+right=goto_split:right
+keybind = cmd+alt+up=goto_split:up
+keybind = cmd+alt+down=goto_split:down
+keybind = cmd+enter=toggle_split_zoom
+
+keybind = cmd+t=new_tab
+keybind = cmd+shift+left=previous_tab
+keybind = cmd+shift+right=next_tab
+
+keybind = cmd+plus=increase_font_size:1
+keybind = cmd+minus=decrease_font_size:1
+keybind = cmd+zero=reset_font_size
+
+keybind = cmd+shift+r=reload_config
