@@ -49,18 +49,37 @@ if [[ -z "$zen_profile" ]]; then
   echo "  skipping zen: no active profile found in $zen_root/profiles.ini" >&2
 else
   target="$zen_profile/zen-keyboard-shortcuts.json"
+  zen_flags=("${STOW_FLAGS[@]}")
+  zen_ready=1
+
   # Zen rewrites this file itself whenever a shortcut changes, and Mozilla-family
   # code writes JSON by creating a temp file and renaming it over the target --
-  # which replaces a symlink with a regular file. When that happens the link is
-  # silently gone and the repo copy goes stale, so flag it rather than let it
-  # drift unnoticed.
+  # which replaces a symlink with a regular file. So a regular file here means
+  # either it was never stowed, or Zen overwrote the link and the live copy now
+  # holds edits the repo has never seen.
+  #
+  # Plain `stow` aborts on that ("neither a link nor a directory"), which is the
+  # right default but leaves you stuck. --adopt is the intended escape hatch: it
+  # moves the live file into zen/ and puts the symlink in its place, so the live
+  # version wins and any surprise shows up as a normal `git diff`. Never assume
+  # the repo copy is newer -- Zen leaves "modified" false even on shortcuts you
+  # changed yourself, so that flag cannot be used to tell them apart.
   if [[ -f "$target" && ! -L "$target" ]]; then
-    echo "  NOTE: $target is a regular file, not a symlink." >&2
-    echo "        Either it was never stowed, or Zen overwrote the link." >&2
-    echo "        Diff it against zen/ and copy across before re-stowing." >&2
+    if pgrep -x zen >/dev/null 2>&1; then
+      echo "  SKIPPING zen: it is a regular file and Zen is running." >&2
+      echo "        Quit Zen and re-run, or it may overwrite the new symlink." >&2
+      zen_ready=0
+    else
+      echo "  $target is a regular file; adopting it into zen/." >&2
+      echo "        The live version wins. Review with: git diff zen/" >&2
+      zen_flags+=(--adopt)
+    fi
   fi
-  echo "Stowing zen into $zen_profile"
-  stow "${STOW_FLAGS[@]}" --target="$zen_profile" zen
+
+  if [[ "$zen_ready" == 1 ]]; then
+    echo "Stowing zen into $zen_profile"
+    stow "${zen_flags[@]}" --target="$zen_profile" zen
+  fi
 fi
 
 # Yazi's flavors and plugins are fetched, not tracked (see .gitignore). Without

@@ -31,6 +31,7 @@ yazi/plugins/
 
 # Editor / tooling state
 nvim/lazy-lock.json.bak
+*.save
 **/.netrwhist
 **/*.swp
 **/node_modules/

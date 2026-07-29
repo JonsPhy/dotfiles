@@ -10,9 +10,14 @@
 /zsh
 /zen
 
-# Not config: repo tooling and machine-local state
+# Not config: repo tooling and machine-local state.
+# Documentation is matched as a class rather than file by file -- listing
+# /README\.md alone is what put CHEATSHEET.md and KEYBINDINGS.md.save into
+# ~/.config. [^/]* cannot cross a slash, so this only catches markdown at the
+# repo root; nvim/README.md still travels inside the nvim package.
+/[^/]*\.md
+/[^/]*\.save
 /bootstrap\.sh
-/README\.md
 /scripts
 /raycast
 /\.git
