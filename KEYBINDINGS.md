@@ -365,25 +365,21 @@ would create exactly the second vocabulary this document exists to prevent.
 > **Rule: firmware layers are alternative *input methods* for keycodes the spec
 > already defines — never a second vocabulary.**
 
-### 6.4 Open question
+### 6.4 Settled: the host layout stays German
 
 §2.4 and §6.2 both trace back to one thing: the German host layout composes
-symbols with Option. There is an exit — switch macOS to **US** and generate
-Ü/Ä/Ö entirely in firmware (extending the `AltGr+A` trick to all six). That
-frees Option as a modifier system-wide, allows `macos-option-as-alt = true`, and
-collapses most of layer 2.
+symbols with Option, which is why Option is unavailable as a modifier and why
+layer 2 exists at all.
 
-The cost is that German typing on the **built-in laptop keyboard** breaks, since
-it has no firmware to help it.
+There was an exit — switch macOS permanently to **US** and generate Ü/Ä/Ö in
+firmware (extending the `AltGr+A` trick to all six), freeing Option system-wide
+and allowing `macos-option-as-alt = true`. **Decided against.** German typing on
+the built-in laptop keyboard would break, since it has no firmware to help it,
+and that failure mode is constant.
 
-Note this is a *permanent* switch, not the per-keyboard matching of §2.5 — it
-would mean running a US layout even on the German Corne, with firmware making up
-the difference.
-
-**Recommendation: keep the German host layout** unless the laptop keyboard is
-almost never used directly. Option (b) is strictly better ergonomically, but its
-failure mode is constant and irritating. Revisit only after phase 6; a source
-build makes it a contained change rather than a rewrite.
+So Option stays unavailable, §2.4 stands as a permanent constraint rather than a
+temporary one, and layer 2 keeps its Option-composed brackets. Recorded here so
+the question does not get reopened every time §2.4 looks inconvenient.
 
 ---
 
@@ -437,10 +433,10 @@ Two caveats worth stating plainly:
 - The Corne revision must be confirmed before the first build — check the
   keyboard's Vial identification rather than assuming `rev1`.
 
-**Immediate action regardless of the above:** `layout.vil` currently exists only
-on the keyboard and on the Desktop, and `zen-keyboard-shortcuts.json` only in
-the Zen profile. Both are unversioned. Copy them into this repo **before** any
-change, so there is a restore point.
+**Done (phase 0):** both files are now in this repo — `corne/layout.vil` and
+`zen/zen-keyboard-shortcuts.json`, stowed per the README. The keyboard's EEPROM
+is still the source of truth for the layout; the repo copy is a snapshot until
+the source build lands, at which point that relationship inverts.
 
 ---
 
@@ -451,7 +447,7 @@ the binding constraint, not effort.
 
 | Phase | Change | Touches |
 | --- | --- | --- |
-| **0** | Back up `layout.vil` + Zen JSON into this repo. Ratify this doc. | — |
+| **0** | ~~Back up `layout.vil` + Zen JSON into this repo~~ **done**. Ratify this doc. | — |
 | **1** | Direction keys: `Ctrl+hjkl` in-app, `Hyper+hjkl` cross-app | ghostty, aerospace, karabiner |
 | **2** | One window manager: uninstall Rectangle, add AeroSpace window mode, delete the `Hyper+a`/`Hyper+q` hack | karabiner, aerospace |
 | **3** | Neovim namespace cleanup (§4.3) | nvim |

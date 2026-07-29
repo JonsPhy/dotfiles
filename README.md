@@ -58,9 +58,10 @@ dotfiles/
 ├── starship/    starship.toml                    →  ~/.config/starship
 ├── aerospace/   aerospace.toml                   →  ~/.config/aerospace
 ├── karabiner/   karabiner.json, rules.ts         →  ~/.config/karabiner
+├── corne/       layout.vil                       →  ~/.config/corne
 ├── zsh/         .zshrc, .zprofile                →  ~
+├── zen/         zen-keyboard-shortcuts.json      →  the active Zen profile
 ├── raycast/     scripts and AI presets           (not stowed)
-├── scripts/     standalone shell scripts         (not stowed)
 └── bootstrap.sh
 ```
 
@@ -79,12 +80,28 @@ exists to avoid.
 
 Because everything in the root gets linked, anything that does **not** belong
 in `~/.config` has to be excluded in [`.stow-local-ignore`](.stow-local-ignore)
-— currently `zsh`, `scripts`, `raycast`, `bootstrap.sh`, `README.md` and the
-git metadata. Patterns beginning with `/` are anchored at the repo root; a bare
+— currently `zsh`, `zen`, `raycast`, `bootstrap.sh`, `README.md` and the git
+metadata. Patterns beginning with `/` are anchored at the repo root; a bare
 name would match at any depth and could hit a nested file by accident.
 
-`zsh` is the one exception to the target: `.zshrc` and `.zprofile` belong in
-`$HOME`, so it is stowed separately and ignored by the root package.
+Two packages have a different target and are therefore ignored by the root
+package:
+
+- **`zsh`** — `.zshrc` and `.zprofile` belong in `$HOME`.
+- **`zen`** — Zen keeps its keyboard shortcuts inside the browser profile. The
+  profile directory carries a random per-install prefix
+  (`Profiles/gtsr0yef.Default (release)`), so `bootstrap.sh` resolves the active
+  one from `profiles.ini` rather than hard-coding it. Note it reads the
+  `[Install…]` section, which is what the running browser actually uses — the
+  `Default=1` flag under `[ProfileN]` is an older, separate mechanism and on
+  this machine it points at a *different* profile.
+
+  **Quit Zen before stowing this package.** Zen rewrites
+  `zen-keyboard-shortcuts.json` whenever a shortcut changes, and Mozilla-family
+  code writes JSON by renaming a temp file over the target — which replaces a
+  symlink with a regular file. `bootstrap.sh` cannot prevent that, so it checks
+  for it instead and warns when the target is a regular file, meaning either it
+  was never stowed or Zen overwrote the link.
 
 > **Note:** providing a `.stow-local-ignore` file *replaces* stow's built-in
 > default ignore list rather than extending it, which is why the VCS entries
@@ -233,12 +250,29 @@ yarn watch       # rebuild on save
 `rules.ts` writes `karabiner.json` relative to its own directory, so the output
 lands in this repo and Karabiner picks it up through the symlink immediately.
 
-### `raycast`, `scripts`
+### `corne`
 
-Not stowed — no `~/.config` destination. `raycast/` holds scripts and AI
-presets; the compiled extension bundles are gitignored (~166 MB of build
-artifacts, and the only source of gitleaks findings). `scripts/` holds
-standalone shell scripts.
+The Vial layout export for the Corne keyboard. Stowed to `~/.config/corne` for
+a stable path to point Vial's file picker at — nothing reads it automatically,
+so the symlink is for convenience rather than function.
+
+The keyboard's own EEPROM is currently the source of truth; `layout.vil` is a
+snapshot of it. [`KEYBINDINGS.md`](KEYBINDINGS.md) §7 proposes replacing this
+with a `vial-qmk` source build (`keymap.c` in this repo), at which point the
+repo becomes authoritative and this file is only a fallback.
+
+### `zen`
+
+`zen-keyboard-shortcuts.json` — all 141 shortcuts, currently at their defaults
+with none customised. Stowed into the active browser profile; see the stow
+section above for why it needs its own target and why **Zen must be quit
+first**.
+
+### `raycast`
+
+Not stowed — no `~/.config` destination. Holds scripts and AI presets; the
+compiled extension bundles are gitignored (~166 MB of build artifacts, and the
+only source of gitleaks findings).
 
 ---
 

@@ -8,6 +8,7 @@
 
 # Packages with a different stow target (see bootstrap.sh)
 /zsh
+/zen
 
 # Not config: repo tooling and machine-local state
 /bootstrap\.sh
